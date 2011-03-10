@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP I18N Component configuration file
+		
+		This component aims to handle I18N and L10N issues
+	 -->
+	 
+	 <!-- 
+		MMP I18N Factory to access MMP IO beans
+	 -->
+	<bean id="mmpI18NFactory" class="com.orange.mmp.i18n.InternationalizationManagerFactory">
+		<property name="internationalizationManagerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpDefaultI18NManager"/>
+			</map>
+		</property>
+	</bean>
+	
+	 <!-- Message Source for localization -->
+    <bean id="mmpDefaultI18NManager" class="com.orange.mmp.i18n.helpers.DefaultInternationalizationManager"> 
+    	<property name="defaultMessageSource" ref="messageSource"/>
+    	<property name="messageBasePath" value="${internationalizationmanager.resource.folder}"/>	
+    </bean>
+    
+    <!-- Spring MessageSource for I18N -->	
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    	<property name="basename" value="file://${internationalizationmanager.resource.folder}/messages" />
+    	<property name="fileEncodings" value="UTF-8" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="600"/>    
+	</bean> 
+	 
+
+</beans>

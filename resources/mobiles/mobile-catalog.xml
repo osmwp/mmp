@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mobile-catalog>
+     <mobile shortUA="SamsungS8000" pfmType="OWP" branchId="D" codeName="Cubic" finalName="S8000" userAgentKey="SamsungS8000">
+         <jadAttributes>
+             <jadAction value="true" attribute="MIDlet-Touch-Support" action="add"/>
+             <jadAction value="Samsung-S8000" attribute="MeMo-Extra-UA" action="add"/>
+         </jadAttributes>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile shortUA="SonyEricssonC905" pfmType="OWP" branchId="D" codeName="Shiho" finalName="C905" userAgentKey="SonyEricssonC905">
+         <jadAttributes/>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile shortUA="SonyEricssonW890" pfmType="OWP" branchId="D" finalName="W890" userAgentKey="SonyEricssonW890">
+         <jadAttributes/>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile shortUA="SAMSUNG-SGH-U600" pfmType="OWP" branchId="D" finalName="U600" userAgentKey="SamsungU600">
+         <jadAttributes/>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile shortUA="SonyEricssonW810" pfmType="OWP" branchId="D" finalName="W810" userAgentKey="SonyEricssonW810">
+         <jadAttributes/>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile shortUA="NokiaN73" pfmType="OWP" branchId="D" finalName="N73" userAgentKey="NokiaN73">
+         <jadAttributes/>
+         <dropped>false</dropped>
+     </mobile>
+     <mobile shortUA="SonyEricssonK800" pfmType="OWP" branchId="D" finalName="K800" userAgentKey="SonyEricssonK800">
+         <jadAttributes/>
+         <dropped>false</dropped>
+     </mobile>
+     <mobile shortUA="NokiaE51" pfmType="OWP" branchId="D" finalName="N51" userAgentKey="NokiaE51">
+         <jadAttributes/>
+         <dropped>false</dropped>
+     </mobile>
+     <mobile shortUA="NokiaN95" pfmType="OWP" branchId="D" codeName="N95" finalName="N95" userAgentKey="NokiaN95">
+         <jadAttributes>
+             <jadAction inMF="never" inJad="never" strict="false" value="NokiaN95" attribute="MeMo-Extra-UA" action="add"/>
+         </jadAttributes>
+         <dropped>false</dropped>
+     </mobile>
+     <mobile shortUA="SonyEricssonW910" pfmType="OWP" branchId="D" finalName="W910" userAgentKey="SonyEricssonW910">
+         <jadAttributes/>
+         <dropped>false</dropped>
+     </mobile>
+     <mobile OTAEnabled="true" shortUA="KC910" pfmType="OWP" branchId="D" codeName="Renoir" finalName="KC910" userAgentKey="LGKC910Renoir">
+         <jadAttributes>
+             <jadAction inMF="never" inJad="never" strict="false" value="true" attribute="MIDlet-Touch-Support" action="add"/>
+         </jadAttributes>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+     <mobile OTAEnabled="true" shortUA="BL40" pfmType="OWP" branchId="D" codeName="White" finalName="BL40" userAgentKey="LGBL40">
+         <jadAttributes>
+             <jadAction inMF="never" inJad="never" strict="false" value="LG-BL40" attribute="MeMo-Extra-UA" action="add"/>
+             <jadAction inMF="never" inJad="never" strict="false" value="true" attribute="MIDlet-Touch-Support" action="add"/>
+         </jadAttributes>
+         <dropped>false</dropped>
+         <dropDate></dropDate>
+     </mobile>
+</mobile-catalog>

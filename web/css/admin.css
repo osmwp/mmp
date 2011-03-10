@@ -1,0 +1,292 @@
+body{
+	padding:0px;
+	margin:0px;
+	background-color:#EEEEEE;
+	font-family:Helvetica, Arial;
+    font-size:12px;
+ 
+}
+
+.title{
+	font-weight:bold;
+	font-size:16px;
+	vertical-align:middle;
+	color:#000000;
+}
+
+.title2{
+	font-weight:bold;
+	font-size:14px;
+	vertical-align:middle;
+	color:#000000;
+}
+
+.fieldsetLegend{
+	font-weight:bold;
+	font-size:12px;
+	vertical-align:middle;
+	color:#666666;
+}
+
+.popup{
+	font-weight:bold;
+	vertical-align:middle;
+	color:#000000;
+	font-family:Helvetica, Arial;
+    font-size:12px;
+}
+
+.attrAdd{
+    color:#00CC00;
+}
+
+.attrUpdate{
+    color:#0000CC;
+}
+
+.attrDelete{
+    color:#CC0000;
+    text-decoration: line-through;
+}
+
+.text{
+	vertical-align:middle;
+	font-size:12px;
+	color:#000000;
+}
+
+.label{
+	font-weight:bold;
+	font-size:12px;
+	vertical-align:middle;
+	color:#000000;
+}
+
+.mainBullet{
+	font-size:14px;
+	vertical-align:middle;
+	color:#ff6600;
+}
+
+table.component{
+	background-color:#000000;
+	color:#FFFFFF;
+	width:720px;
+	font-size:12px;
+	vertical-align:middle;
+}
+
+td.component{
+	background-color:#ffffff;
+	font-size:12px;
+	color:#000000;
+}
+
+td.keyComponent{
+    background-color:#ffffff;
+    font-weight: bold;
+    color:red;
+}
+
+td.notSignificantComponent{
+    background-color:#ffffff;
+    color:grey;
+}
+
+td.significantComponent{
+    background-color:#ffffc8;
+    color:#000000;
+}
+
+td.subcomponent{
+    background-color:#DCDCDC;
+    color:#000000;
+}
+
+td.noOTAComponent{
+    background-color:#DCDCDC;
+    color:#000000;
+}
+
+td.title{
+	background-color:#c8c8c8;
+	font-weight: bold;
+	color:#ff0000;
+}
+
+.wrapper{
+	width:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+
+.scroller{
+	margin:0px;
+	padding:0px;
+	border:0px;
+	overflow:auto;
+}
+
+.hiddenWrapper{
+	width:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+	display:none;
+}
+
+.hiddenWrapper{
+    width:100%;
+    margin:0px;
+    padding:0px;
+    border:0px;
+    display:none;
+}
+
+input.fieldButton{
+	font-weight:bold;
+	vertical-align:middle;
+	background-color:#ff6600;
+	color:#FFFFFF;
+}
+
+select.fieldSelect{
+	vertical-align:middle
+}
+
+input.fieldTextL{
+	vertical-align:middle;
+	text-align:left
+}
+
+input.fieldTextR{
+	vertical-align:middle;
+	text-align:right
+}
+
+input.fieldRadio{
+	vertical-align:middle
+}
+
+div#menu{
+	margin:10px;
+	border:1px solid #000000;
+	width:250px;
+	padding:10px;
+	background-color:#FFFFFF;
+	text-align:justify
+}
+
+div#main{
+	border:1px solid #000000;
+	width:1000px;
+	padding:10px;
+	text-align:justify;
+	background-color:#FFFFFF;
+}
+
+div.mobiles {
+	width:300px;
+	background-color: #eeeeee;
+	overflow: auto;
+	text-align: left;
+}
+
+.tooltip {
+	position: absolute;
+	display: none;
+	background-color: #FF6600;
+	border-width: 2px;
+	border-style: solid;
+	border-color: #555555;
+	padding: 2px;
+	color: white;
+	font-weight:bold;
+}
+
+td.reverse {
+	font-weight:bold;
+	font-size:12px;
+	color:#FFFFFF;
+}
+
+a{
+	color:#000000
+}
+a:hover{
+	color:#FF0000
+}
+
+a.revert{
+	color:#FFFFFF
+}
+a.revert:hover{
+	color:#FF0000
+}
+	
+.popper{ 
+	position: absolute;
+	visibility: hidden;
+	z-index:3;
+}
+
+#topgauche {
+	 position:absolute;  z-index:10;
+ }
+
+a:hover.ejsmenu {
+	margin-left:5px;
+	color:#FFFFFF; 
+	text-decoration:none;
+	font-family:Helvetica, Arial;
+	font-size:12px;
+	font-weight:bold;
+}
+
+a.ejsmenu {
+	margin-left:5px;
+	color:#FFFFFF;
+	text-decoration:none;
+	font-family:Helvetica, Arial;
+	font-size:12px;
+	font-weight:bold;
+}
+
+a:hover.ejsmenuitem {
+	margin-left:5px;
+	color:#FFFFFF; 
+	text-decoration:none;
+	font-family:Helvetica, Arial;
+	font-size:10px;
+}
+
+a.ejsmenuitem {
+	margin-left:5px;
+	color:#FFFFFF;
+	text-decoration:none;
+	font-family:Helvetica, Arial;
+	font-size:10px;
+}
+
+#fadeinboxError{
+position:absolute;
+left: 0;
+top: -400px;
+border: 2px solid black;
+background-color: #FFFFFF;
+padding: 4px;
+z-index: 100;
+visibility:hidden;
+}
+
+#fadeinboxSuccess{
+position:absolute;
+left: 0;
+top: -400px;
+border: 2px solid black;
+background-color: #FFFFFF;
+padding: 4px;
+z-index: 100;
+visibility:hidden;
+}

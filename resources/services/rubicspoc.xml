@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Djinngo service descriptor -->
+<service xmlns="http://www.orange.com/mmp/bind/data/service" default="true">
+	<!-- Service ID -->
+	<id>rubicspoc</id>
+	<!-- Service hostname -->
+	<hostname>localhost</hostname>
+	<!-- Indicates if service supports generic default version for unsupported mobiles -->
+	<usedefault>true</usedefault>
+	<!-- Indicates if service must be signed if possible -->
+	<signed>false</signed>
+	<!-- The list of additional JAD entries -->
+	<jadentries>
+		<jadentry>
+			<key>PFS</key>
+			<value>http://mmp.supermandarine.com/services/api/</value>
+		</jadentry>
+	</jadentries>
+</service>
+

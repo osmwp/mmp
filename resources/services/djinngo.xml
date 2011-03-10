@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Djinngo service descriptor -->
+<service default="true">
+	<!-- Service ID -->
+	<id>djinngo</id>
+	<!-- Service hostname -->
+	<hostname>m.djinngo.com</hostname>
+	<!-- Indicates if service supports generic default version for unsupported mobiles -->
+	<usedefault>true</usedefault>
+	<!-- Indicates if service must be signed if possible -->
+	<signed>false</signed>
+</service>

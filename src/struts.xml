@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.url.includeParams" value="none" />
+	<constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+	<package
+		name="struts2"
+		extends="struts-default"
+		namespace="/struts2">
+		
+		<default-interceptor-ref name="defaultStack"/>
+		
+				
+		<!-- Session Action -->
+		<action name="session" class="com.orange.mmp.mvc.actions.SessionAction">
+			<result>/WEB-INF/jsp/session/sessionAdmin.jsp</result>
+		</action>
+		
+		<!-- OTA Action -->
+		<action name="midlet_*" class="com.orange.mmp.mvc.actions.MidletAction" method="{1}">
+			<result>/WEB-INF/jsp/midlet/midlet.jsp</result>
+		</action>
+		
+		<!-- Module Action -->
+		<action name="module_*" class="com.orange.mmp.mvc.actions.ModuleAction" method="{1}">
+			<result>/WEB-INF/jsp/module/module.jsp</result>
+			<result name="upload">/WEB-INF/jsp/module/module.jsp</result>
+			<result name="widget">/WEB-INF/jsp/module/widget.jsp</result>
+			<result name="webservice">/WEB-INF/jsp/module/webservice.jsp</result>		
+			<result name="library">/WEB-INF/jsp/module/library.jsp</result>
+			<result name="download" type="stream"> <!-- Download a module (JAD file) -->
+				<param name="contentType">application/download</param> 
+				<param name="inputName">inputStream</param> 
+				<param name="bufferSize">1024</param>
+				<param name="contentDisposition">attachment;filename=${fileName}</param>
+				<param name="contentLength">${fileSize}</param>
+			</result>
+		</action>
+
+		<!-- Mobile Action -->
+		<action name="mobile_*" class="com.orange.mmp.mvc.actions.MobileAction" method="{1}">
+			<result>/WEB-INF/jsp/mobile/mobile.jsp</result>
+		</action>
+		
+		<!-- Branch Action -->
+		<action name="branch_*" class="com.orange.mmp.mvc.actions.BranchAction" method="{1}">
+			<result>/WEB-INF/jsp/branch/branch.jsp</result>
+		</action>
+
+		<!-- Security Action -->
+		<action name="certif_*" class="com.orange.mmp.mvc.actions.CertifAction" method="{1}">
+			<result>/WEB-INF/jsp/certif/certif.jsp</result>
+		</action>
+
+		<!-- Service Action -->
+		<action name="service_*" class="com.orange.mmp.mvc.actions.ServiceAction" method="{1}">
+			<result>/WEB-INF/jsp/service/service.jsp</result>
+		</action>
+		
+		<!-- JSON-RPC Tester Action -->
+		<action name="json" class="com.orange.mmp.mvc.actions.ServiceAction">
+			<result>/WEB-INF/jsp/json/test.jsp</result>
+		</action>
+		
+	</package>
+
+</struts>

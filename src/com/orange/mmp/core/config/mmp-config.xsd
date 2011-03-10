@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+		xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+		jaxb:version="2.0">
+		
+	<!--
+		Root element of MMP modules configuration  
+	-->	
+	<xsd:element name="mmp-config">
+		<xsd:annotation>
+	   		<xsd:appinfo>
+	       		<jaxb:class name="MMPConfig"/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice>
+				<!-- List of caches -->
+				<xsd:element name="cache" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Cache name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Other attributes -->
+						<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>		
+				</xsd:element>
+				<!-- List of services -->
+				<xsd:element name="api" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<xsd:element name="definition">
+								<xsd:complexType>
+									<xsd:choice>
+										<!-- Any element -->
+										<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+									</xsd:choice>
+									<!-- Other attributes -->
+									<xsd:anyAttribute processContents="skip"/>
+								</xsd:complexType>	
+							</xsd:element>
+							<xsd:element name="implementation">
+								<xsd:complexType>
+									<xsd:choice>
+										<!-- Any element -->
+										<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+									</xsd:choice>
+									<!-- Other attributes -->
+									<xsd:anyAttribute processContents="skip"/>
+								</xsd:complexType>	
+							</xsd:element>
+						</xsd:choice>
+						<!-- Service name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+					   	<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>		
+				</xsd:element>
+				<!-- List of web access -->
+				<xsd:element name="web" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Web access point definition -->
+							<xsd:element name="accesspoint" minOccurs="0" maxOccurs="1">
+								<xsd:complexType>
+									<!-- Access point class name -->
+									<xsd:attribute name="classname" type="xsd:string" use="required" />
+									<!-- Other attributes -->
+									<xsd:anyAttribute processContents="skip"/>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+						<!-- Service name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Web files folder -->
+						<xsd:attribute name="folder" use="optional" type="xsd:string" default="web"/>
+						<!-- Internationalization message source name  -->
+						<xsd:attribute name="messagesource" use="optional" type="xsd:string" default=""/>
+						<!-- Default resource -->
+						<xsd:attribute name="default" use="optional" type="xsd:string" default=""/>
+						<!-- Other attributes -->
+						<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+				<!-- List of Messages Listeners -->
+    			<xsd:element name="message-listener" minOccurs="0" maxOccurs="unbounded">
+    				<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Other attributes -->
+						<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>		
+				</xsd:element>
+				<!-- List of Loggers -->
+				<xsd:element name="logger" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Logger name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Stats logger -->
+						<xsd:attribute name="stats" use="optional" type="xsd:boolean" default="false"/>
+						<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+				<!-- List of Filters -->
+				<xsd:element name="filter" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Filter name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+				<!-- List of Home pages -->
+				<xsd:element name="homepage" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Filter name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Service name -->
+						<xsd:attribute name="service" use="required" type="xsd:string"/>
+						<!-- Home page URL - absolute or relative (with web part) -->
+						<xsd:attribute name="url" use="required" type="xsd:string"/>
+						<!-- Home page access point name -->
+						<xsd:attribute name="web" use="optional" type="xsd:string"/>
+						<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+				<!-- List of Files to handle by MMP -->
+				<xsd:element name="fileset" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Filter name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+				<!-- List of MessageSource to handle by MMP -->
+				<xsd:element name="messagesource" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice>
+							<!-- Any element -->
+							<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+						</xsd:choice>
+						<!-- Filter name -->
+						<xsd:attribute name="name" use="required" type="xsd:string"/>
+						<!-- Other attributes -->
+					   	<xsd:anyAttribute processContents="skip"/>
+					</xsd:complexType>	
+				</xsd:element>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

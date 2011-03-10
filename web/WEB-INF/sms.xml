@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!--	SMS Factory bean-->
+	<bean id="smsFactory" class="com.orange.mmp.sms.SMSFactory">
+		<property name="smsHandlers" ref="smsHandlers"/>
+		<property name="ucs2Languages">
+			<list>
+				<value>pl</value> <!-- Polish -->
+				<value>zh</value> <!-- Chinese -->
+			</list>
+		</property>
+	</bean>
+
+	<!--	Handlers list-->
+	<bean id="smsHandlers" class="java.util.LinkedList">
+		<constructor-arg>
+			<list>
+				<bean class="com.orange.mmp.sms.InstantAPISMSHandler">
+					<property name="countryCodesList">
+						<props>
+							<prop key="1-">20348</prop>  <!-- NANP -->
+							<prop key="32">20348</prop>  <!-- Belgium -->
+							<prop key="33">20348</prop>  <!-- France -->
+							<prop key="34">20348</prop>  <!-- Spain -->
+							<prop key="39">20348</prop>  <!-- Italy -->
+							<prop key="41">20348</prop>  <!-- Switzerland -->
+							<prop key="44">20348</prop>  <!-- United Kingdom -->
+							<prop key="48">20348</prop>  <!-- Poland -->
+							<prop key="51">20348</prop>  <!-- Peru -->
+							<prop key="52">20348</prop>  <!-- Mexico -->
+							<prop key="54">20348</prop>  <!-- Argentina -->
+							<prop key="55">20348</prop>  <!-- Brazil -->
+							<prop key="56">20348</prop>  <!-- Chile -->
+							<prop key="58">20348</prop>  <!-- Venezuela -->
+							<prop key="86">20348</prop>  <!-- China -->
+							<prop key="351">20348</prop>  <!-- Portugal -->
+							<prop key="353">20348</prop>  <!-- Ireland -->
+						</props>
+					</property>
+					<property name="endPointAddress" value="${delivery.sms.instantapi.url}"/>
+					<property name="smsApiAccessKey" value="${delivery.sms.instantapi.key}"/>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

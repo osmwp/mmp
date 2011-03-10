@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP NET Component configuration file
+		
+		This component provides ConnectionManager for several types of protocols (HTTP, FTP ...)
+		
+		It is intended to offer high performances to retrieve data from connections.
+		
+		Features :
+			- ...
+	 -->
+	 
+	 <!-- 
+		MMP NET Factory to access MMP NET beans
+	 -->
+	<bean id="mmpNetFactory" class="com.orange.mmp.net.ConnectionManagerFactory">
+		<property name="connectionManagerSingletons">
+			<map>
+				<entry key="socket" value-ref="mmpNetSocket"/>
+				<entry key="http" value-ref="mmpNetHTTP"/>
+			</map>
+		</property>
+	</bean>
+	 
+	<!-- 
+		Socket entry point - ConnectionManager Implementations
+	 -->
+	 <bean id="mmpNetSocket" class="com.orange.mmp.net.socket.SocketConnectionManager"/>
+	 
+	<!-- 
+		HTTP/HTTPS entry point - ConnectionManager Implementations
+		
+		Current implementation is based on HttpClient 4.0-beta2 API 			
+	 -->
+	 <bean id="mmpNetHTTP" class="com.orange.mmp.net.http.HttpConnectionManager">
+	 	<property name="proxy" value="${net.http.proxy}"/>
+	 </bean>
+
+</beans>

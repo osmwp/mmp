@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- MMP DAO Component configuration file
+		
+		This component provides Data Access Objects using several implementations (file, DB ...)
+		
+	 -->
+	 
+	 <!-- 
+		MMP DAO Factory to access MMP DAO beans
+	 -->
+	<bean id="mmpDaoFactory" class="com.orange.mmp.dao.DaoManagerFactory">
+		<property name="daoManagerSingletons">
+			<map>
+				<entry key="default" value-ref="flfDaoManager"/>
+				<entry key="flf" value-ref="flfDaoManager"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 
+		DAO Manager based on Flat Files (FLF), should be shared files	
+	 -->
+	 <bean id="flfDaoManager" class="com.orange.mmp.dao.flf.FlfDaoManager">
+	 	<property name="daoMap">
+	 		<map>
+	 			<entry key="branch">
+		 		    <bean class="com.orange.mmp.dao.flf.BranchDaoFlfImpl">
+						<property name="path" value="${daomanager.branch.path}"/>
+    				</bean>		
+	 			</entry>
+	 			<entry key="ticket">
+		 		    <bean class="com.orange.mmp.dao.flf.DeliveryTicketDaoFlfImpl">
+						<property name="path" value="${daomanager.ticket.path}"/>
+    				</bean>		
+	 			</entry>
+	 			<entry key="mobile">
+		 		    <bean class="com.orange.mmp.dao.flf.MobileDaoFlfImpl">
+						<property name="path" value="${daomanager.mobile.path}"/>
+    				</bean>		
+	 			</entry>
+	 			<entry key="midlet">
+		 		    <bean class="com.orange.mmp.dao.flf.MidletDaoFlfImpl">
+						<property name="path" value="${daomanager.midlet.path}"/>
+    				</bean>		
+	 			</entry>
+	 			<entry key="module">
+		 		    <bean class="com.orange.mmp.dao.flf.ModuleDaoFlfImpl">
+						<property name="path" value="${daomanager.module.path}"/>
+    				</bean>		
+	 			</entry>
+	 			<entry key="service">
+		 		    <bean class="com.orange.mmp.dao.flf.ServiceDaoFlfImpl">
+						<property name="path" value="${daomanager.service.path}"/>
+    				</bean>		
+	 			</entry>
+	 		</map>	 	
+	 	</property>
+	 </bean>
+    
+</beans>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+  	<display-name>mmp</display-name>
+  
+ 	<!-- Struts2 Filter -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>
+			org.apache.struts2.dispatcher.FilterDispatcher
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+  
+  	<!-- SPRING ContextLoader, used in Tomcat to load Spring context at init of Web Context -->
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<!-- FileUpload Cleaner for Rest API -->
+	<listener>
+    	<listener-class>
+      org.apache.commons.fileupload.servlet.FileCleanerCleanup
+    	</listener-class>
+  	</listener>
+	
+	
+	<!-- SPRING initial contexts list  -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/base.xml</param-value>
+	</context-param>
+
+
+	<!-- Root URL - Access to service home page -->
+	<servlet>
+		<servlet-name>homePageAccess</servlet-name>
+		<servlet-class>com.orange.mmp.webpart.MMPHomePageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>homePageAccess</servlet-name>
+		<url-pattern>/HomePage</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- JSON RPC SERVLET -->
+	<servlet>
+		<servlet-name>JSONRPCServlet</servlet-name>
+		<servlet-class>
+			com.orange.mmp.api.ws.jsonrpc.MMPJsonRpcServlet
+		</servlet-class>
+		<init-param>
+			<param-name>auto-session-bridge</param-name>
+			<param-value>0</param-value>
+		</init-param>
+	</servlet>
+	
+	<!-- JSON-RPC ServiceHandlers -->
+	<servlet>
+		<servlet-name>jsonrpcPublic</servlet-name>
+		<servlet-class>com.orange.mmp.api.ws.jsonrpc.MMPJsonRpcPublicServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+		<servlet-class>com.orange.mmp.api.ws.jsonrpc.MMPJsonRpcPrivateServlet</servlet-class>
+	</servlet>
+	
+	<!-- REST ServiceHandler -->
+	<servlet>
+		<servlet-name>restPublic</servlet-name>
+		<servlet-class>com.orange.mmp.api.ws.rest.MMPRestPublicServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>restPrivate</servlet-name>
+		<servlet-class>com.orange.mmp.api.ws.rest.MMPRestPrivateServlet</servlet-class>
+	</servlet>
+	
+	<!-- Services API Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+		<url-pattern>/services/api/JSON-RPC*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+		<url-pattern>/services/api/JSON-RPC/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+		<url-pattern>/JSON-RPC*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+		<url-pattern>/JSON-RPC/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsonrpcPublic</servlet-name>
+		<url-pattern>/public/services/api/JSON-RPC*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jsonrpcPublic</servlet-name>
+		<url-pattern>/public/services/api/JSON-RPC/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>restPrivate</servlet-name>
+		<url-pattern>/services/api/rest/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>restPublic</servlet-name>
+		<url-pattern>/public/services/api/rest/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Bundle Web part Servlet Mapping -->
+	<servlet>
+		<servlet-name>bundleWebPart</servlet-name>
+		<servlet-class>com.orange.mmp.webpart.MMPWebPartServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>bundleWebPart</servlet-name>
+		<url-pattern>/services/web/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- OTA Delivery MIDLET SPRING MVC SERVLET -->
+	<servlet>
+		<servlet-name>ota</servlet-name>
+		<servlet-class>
+			org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ota</servlet-name>
+		<url-pattern>/ota/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Bundle Access SPRING MVC SERVLET -->
+	<servlet>
+		<servlet-name>bundle</servlet-name>
+		<servlet-class>
+			org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>bundle</servlet-name>
+		<url-pattern>/bundle/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Restriction to mmpadmin user only for administration pages -->
+	<security-role>
+		<role-name>mmpadmin</role-name>
+	</security-role>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Administration pages</web-resource-name>
+			<url-pattern>/struts2/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>mmpadmin</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	
+	  	
+  	<!-- 
+		Filter used to check PRIVATE requests
+	 -->
+	<filter>
+		<filter-name>privateMmpFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>privateMmpFilter</filter-name>
+		<servlet-name>jsonrpcPrivate</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>privateMmpFilter</filter-name>
+		<servlet-name>restPrivate</servlet-name>
+	</filter-mapping>
+	
+	<!-- 
+		Filter used to check PUBLIC requests
+	 -->
+	<filter>
+		<filter-name>publicMmpFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>publicMmpFilter</filter-name>
+		<servlet-name>jsonrpcPublic</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>publicMmpFilter</filter-name>
+		<servlet-name>restPublic</servlet-name>
+	</filter-mapping>
+	
+	<!-- 
+		Web part filter.
+	 -->
+	<filter>
+		<filter-name>webPartMmpFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>webPartMmpFilter</filter-name>
+		<servlet-name>bundleWebPart</servlet-name>
+	</filter-mapping>
+	
+	
+	<!-- Default page to display -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+</web-app>

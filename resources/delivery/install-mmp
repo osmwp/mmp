@@ -1,0 +1,461 @@
+#!/bin/sh
+#set -x
+# ---------------------------------------------------------------------------
+#
+#	MMP Application Server Installation Script
+#
+#	A-MMP-G02R03C01.SIG
+#
+# Requires :
+# --------------------
+# * env JONAS_BASE
+# * env JONAS_ROOT
+# * env JAVA_HOME (must point on a JDK not a JRE)
+
+# Colors ...
+R="\033[1;31m"
+G="\033[1;32m"
+E="\033[0m"
+
+#Consts and default values
+APP_USER=mmp
+APP_GROUP=mmp
+REALM_USR=user
+REALM_PWD=*****
+SIG="A-MMP-V1.SIG"
+APP_NAME=mmpas
+LOGS_PATH=""
+CACHE_PATH=""
+REPOSITORY_PATH=""
+BACK_PWD=$PWD
+
+# ------------------------------------------------------
+# Functions
+# ------------------------------------------------------
+
+echo_usage() {
+    echo ""
+    echo "Usage : $0 -f <archive_file> -i <instance_id> [-l <logs_path>] [-c <cache_path>] [-r <repository_path>] [-s <script_path>]"
+    echo ""
+    echo " <instance_id> : the name of the current instance for shared files (ex : mmpas1, mmpadmin ...)"
+    echo " <archive_file> : installation archive filename (ex : A-MMP-G02R00C00.tar)"
+    echo " <logs_path> : overrides logs path (default : /data/logs/mmp) "
+    echo " <cache_path> : overrides OSGI cache path (default : /exec/applis/mmp/current/repository/cache) "
+    echo " <repository_path> : overrides shared repository path (default : /data/flf/mmp/files)"
+    echo " <scripts_path> : overrides scripts path (default : /exec/applis/mmp/current/sh)"
+}
+
+clear(){
+	cd $BACK_PWD
+	rm -rf ${APP_NAME}.tmp
+}
+
+# ------------------------------------------------------
+# Acquire parameters
+# ------------------------------------------------------
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+    -f)
+    shift
+    ARCHIVE_FILE=$1
+    ;;
+    -i)
+    shift
+    INSTANCE_ID=$1
+    ;;
+    -l)
+    shift
+    LOGS_PATH=$1
+    ;;
+	-c)
+    shift
+    CACHE_PATH=$1
+    ;;
+    -r)
+    shift
+    REPOSITORY_PATH=$1
+    ;;
+    -s)
+	shift
+    SCRIPTS_PATH=$1
+    ;;
+    *)
+    echo "Error : Unrecognized command : $1"
+    echo_usage
+    exit 2
+    ;;
+    esac;
+    shift;
+done;
+
+# ------------------------------------------------------
+# Set default path if not specified
+# ------------------------------------------------------
+if [ "x$LOGS_PATH" = "x" ] ; then
+	LOGS_PATH=/data/logs/${INSTANCE_ID}
+fi
+
+if [ "x$CACHE_PATH" = "x" ] ; then
+	CACHE_PATH=/exec/applis/${APP_NAME}/current/repository/cache
+fi
+
+if [ "x$REPOSITORY_PATH" = "x" ] ; then
+	REPOSITORY_PATH=/data/flf/bbtmadmin/files
+fi
+
+if [ "x$SCRIPTS_PATH" = "x" ] ; then
+	SCRIPTS_PATH=/exec/applis/${APP_NAME}/current/sh
+fi
+
+# ------------------------------------------------------
+# Check env.
+# ------------------------------------------------------
+printf "Checking environment ... \t\t"
+if [ "$LOGNAME" != "root" ] ; then
+	if [ "$USER" != "root" ] ; then
+		printf "[${R}Failed$E]\n"
+		echo "Error : Installation must be done using 'root' account"
+		echo_usage
+		exit 2
+	fi
+fi
+
+if [ ! -d "/exec/applis/${APP_NAME}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Jonas instance '${APP_NAME}' not found"
+	echo_usage
+	exit 2
+fi
+
+if [ "x" = "x${ARCHIVE_FILE}" -o "x" = "x${APP_NAME}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Missing parameters -f <archive_file>"
+	echo_usage
+	exit 2
+fi
+
+if [ "x" = "x${INSTANCE_ID}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Missing parameters -i <instance_id> "
+	echo_usage
+	exit 2
+fi
+
+if [ ! -d ${REPOSITORY_PATH} ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : REPOSITORY_PATH '$REPOSITORY_PATH' not found"
+	exit 2
+fi
+
+JONAS_BASE=`su - $APP_USER -c 'echo $JONAS_BASE'`
+if [ "x" = "x${JONAS_BASE}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : JONAS_BASE must be set for '$APP_USER' install application"
+	exit 2
+fi
+
+JONAS_ROOT=`su - $APP_USER -c 'echo $JONAS_ROOT'`
+if [ "x" = "x${JONAS_ROOT}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : JONAS_ROOT must be set for '$APP_USER' install application"
+	exit 2
+fi
+
+JAVA_HOME=`su - $APP_USER -c 'echo $JAVA_HOME'`
+if [ "x" = "x${JAVA_HOME}" ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : JAVA_HOME must be set for '$APP_USER' to install application"
+	exit 2
+fi
+
+if [ ! -x ${JAVA_HOME}/bin/jar ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : JAVA_HOME must point on a JDK (jar executable is needed)"
+	exit 2
+fi
+
+if [ ! -d $LOGS_PATH ] ; then
+	mkdir -p $LOGS_PATH 2>/dev/null
+	chown ${APP_USER}:${APP_GROUP} $LOGS_PATH 2>/dev/null
+	if [ $? -ne 0 ] ; then
+		printf "[${R}Failed$E]\n"
+		echo "Error : Logs path not found and could not be created: $LOGS_PATH"
+		clear
+		exit 2
+	fi
+fi
+
+if [ ! -d $CACHE_PATH ] ; then
+	mkdir -p $CACHE_PATH 2>/dev/null
+	chown ${APP_USER}:${APP_GROUP} $CACHE_PATH 2>/dev/null
+	if [ $? -ne 0 ] ; then
+		printf "[${R}Failed$E]\n"
+		echo "Error : OSGI Cache path not found and could not be created: $CACHE_PATH"
+		clear
+		exit 2
+	fi
+fi
+
+if [ ! -d $SCRIPTS_PATH ] ; then
+	mkdir $SCRIPTS_PATH 2>/dev/null
+	if [ $? -ne 0 ] ; then
+		printf "[${R}Failed$E]\n"
+		echo "Error : Scripts folder not found and could not be created: $SCRIPTS_PATH"
+		clear
+		exit 2
+	fi
+fi
+
+printf "[${G}Done$E]\n"
+
+# ------------------------------------------------------
+# Extract archive file
+# ------------------------------------------------------
+clear
+
+printf "Extracting archive file ... \t\t"
+mkdir ${APP_NAME}.tmp  2>/dev/null
+if [ $? -ne 0 ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Failed to create temporary folder : ${APP_NAME}.tmp"
+	exit 2
+fi
+
+cp $ARCHIVE_FILE ${APP_NAME}.tmp 2>/dev/null
+cd ${APP_NAME}.tmp 2>/dev/null
+tar xf $ARCHIVE_FILE 2>/dev/null
+if [ $? -ne 0 ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Failed to extract data from $ARCHIVE_FILE"
+	clear
+	exit 2
+fi
+
+printf "[${G}Done$E]\n"
+
+# ------------------------------------------------------
+# Check installation components
+# ------------------------------------------------------
+printf  "Checking installation components ... \t"
+
+if [ ! -f conf/mmp.properties -o ! -f conf/log4j-mmp.properties ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Invalid archive, configuration files not found !"
+	clear
+	exit 2
+fi
+
+if [ ! -d ${JONAS_BASE}/conf -o ! -d ${JONAS_BASE}/webapps/autoload -o ! -d ${JONAS_BASE}/logs ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Jonas mmp seems to not be properly created (missing folders)"
+	clear
+	exit 2
+fi
+
+printf "[${G}Done$E]\n"
+
+# ------------------------------------------------------
+# Configure application
+# ------------------------------------------------------
+printf  "Configuring application :\n"
+JONAS_BASE_SED=`echo $JONAS_BASE | sed -e 's/\//\\\\\//g'` 2>/dev/null
+REPOSITORY_PATH_SED=`echo $REPOSITORY_PATH | sed -e 's/\//\\\\\//g'` 2>/dev/null
+LOGS_PATH_SED=`echo $LOGS_PATH | sed -e 's/\//\\\\\//g'` 2>/dev/null
+CACHE_PATH_SED=`echo $CACHE_PATH | sed -e 's/\//\\\\\//g'` 2>/dev/null
+
+
+# ------------------------------------------------------
+# Repository
+# ------------------------------------------------------
+printf  "\t Repository \t\t"
+
+mkdir -p ${REPOSITORY_PATH}/delivery 2>/dev/null
+mkdir -p ${REPOSITORY_PATH}/i18n 2>/dev/null
+mkdir -p ${REPOSITORY_PATH}/midlets 2>/dev/null
+mkdir -p ${REPOSITORY_PATH}/mobiles 2>/dev/null
+mkdir -p ${REPOSITORY_PATH}/modules 2>/dev/null
+mkdir -p ${REPOSITORY_PATH}/services 2>/dev/null
+
+if [ $? -ne 0 ] ; then
+	printf "[${R}KO$E]\n"
+else
+	printf "[${G}OK$E]\n"
+	chown -R ${APP_USER}:${APP_GROUP} ${REPOSITORY_PATH} 2>/dev/null
+fi
+
+# ------------------------------------------------------
+# Service
+# ------------------------------------------------------
+printf  "\t Service \t\t"
+
+sed -e "s/%JONAS_BASE%/$JONAS_BASE_SED/g" WEB-INF/base.xml > WEB-INF/base.xml.new 2>/dev/null
+mv WEB-INF/base.xml.new WEB-INF/base.xml 2>/dev/null
+
+if [ $? -ne 0 ] ; then
+	printf "[${R}KO$E]\n"
+else
+	sed -e "s/%INSTANCE_ID%/${INSTANCE_ID}/g" -e "s/%REPOSITORY_PATH%/$REPOSITORY_PATH_SED/g" -e "s/%JONAS_BASE%/$JONAS_BASE_SED/g" -e "s/%CACHE_PATH%/$CACHE_PATH_SED/g" -e "s/%LOGS_PATH%/$LOGS_PATH_SED/g" conf/mmp.properties > $JONAS_BASE/conf/mmp.properties 2>/dev/null	
+	if [ $? -ne 0 ] ; then
+		printf "[${R}KO$E]\n"
+	else
+		printf "[${G}OK$E]\n"
+		chown ${APP_USER}:${APP_GROUP} $JONAS_BASE/conf/mmp.properties 2>/dev/null
+	fi
+fi
+
+# ------------------------------------------------------
+# Logger
+# ------------------------------------------------------
+printf  "\t Logger \t\t"
+
+sed -e "s/%LOGS_PATH%/$LOGS_PATH_SED/g" conf/log4j-mmp.properties > $JONAS_BASE/conf/log4j-mmp.properties 2>/dev/null
+
+if [ $? -ne 0 ] ; then
+	printf "[${R}KO$E]\n"
+else
+	printf "[${G}OK$E]\n"
+	chown ${APP_USER}:${APP_GROUP} $JONAS_BASE/conf/log4j-mmp.properties 2>/dev/null
+fi
+
+# ------------------------------------------------------
+# Cache
+# ------------------------------------------------------
+printf  "\t Cache \t\t\t"
+
+cp conf/ehcache.xml $JONAS_BASE/conf/ehcache.xml 2>/dev/null
+
+if [ $? -ne 0 ] ; then
+	printf "[${R}KO$E]\n"
+else
+	printf "[${G}OK$E]\n"
+	chown ${APP_USER}:${APP_GROUP} $JONAS_BASE/conf/ehcache.xml 2>/dev/null
+fi
+
+# ------------------------------------------------------
+# Authentication realm
+# ------------------------------------------------------
+printf  "\t Realm \t\t\t"
+
+if [ $(grep -c "${REALM_USR}" $JONAS_BASE/conf/jonas-realm.xml) -eq 0 ] ; then
+	sed -e "s/^\([^<]*\)<\/roles>/\1\t<role name=\"${REALM_USR}\" description=\"MMP Administrator\" \/>\n\1<\/roles>/" -e "s/^\([^<]*\)<\/groups>/\1\t<group name=\"${APP_GROUP}\" roles=\"${REALM_USR}\" description=\"MMP Group\" \/>\n\1<\/groups>/" -e "s/^\([^<]*\)<\/users>/\1\t<user name=\"${REALM_USR}\" password=\"${REALM_PWD}\" roles=\"${REALM_USR}\" \/>\n\1<\/users>/" $JONAS_BASE/conf/jonas-realm.xml > $JONAS_BASE/conf/jonas-realm.xml.new 2>/dev/null
+	if [ $? -eq 0 ] ; then
+		mv $JONAS_BASE/conf/jonas-realm.xml.new $JONAS_BASE/conf/jonas-realm.xml 2>/dev/null
+		if [ $? -ne 0 ] ; then
+			printf "[${R}KO$E]\n"
+		else
+			printf "[${G}OK$E]\n"
+			chown ${APP_USER}:${APP_GROUP} $JONAS_BASE/conf/jonas-realm.xml 2>/dev/null
+		fi
+	fi
+else
+	printf "[${G}OK$E]\n"
+fi
+
+# ------------------------------------------------------
+# Scripts
+# ------------------------------------------------------
+printf  "\t Scripts \t\t"
+
+cp -rp sh/* $SCRIPTS_PATH 2>/dev/null
+ 
+if [ $? -ne 0 ] ; then
+	printf "[${R}KO$E]\n"
+else
+	printf "[${G}OK$E]\n"
+	chmod a+x $SCRIPTS_PATH/* 2>/dev/null
+	chown ${APP_USER}:${APP_GROUP} $SCRIPTS_PATH/* 2>/dev/null
+fi
+
+# ------------------------------------------------------
+# Valves
+# ------------------------------------------------------
+#printf  "\t Valve \t\t\t"
+
+#cp -f conf/*.jar $JONAS_ROOT/lib/catalina/server/lib/ 2>/dev/null
+
+#if [ $? -ne 0 ] ; then
+#	printf "[${R}KO$E]\n"
+#else
+#	printf "[${G}OK$E]\n"
+#fi
+
+# ------------------------------------------------------
+# Certificates
+# ------------------------------------------------------
+#printf  "\t Certificates \t\t"
+
+#cp -f conf/cacerts ${JAVA_HOME}/jre/lib/security
+
+#if [ $? -ne 0 ] ; then
+#	printf "[${R}KO$E]\n"
+#else
+#	printf "[${G}OK$E]\n"
+#fi
+
+# ------------------------------------------------------
+# Build archive
+# ------------------------------------------------------
+printf "Building application ... \t\t"
+rm -f $ARCHIVE_FILE 2>/dev/null
+rm -rf install 2>/dev/null
+${JAVA_HOME}/bin/jar cf ${APP_NAME}.war . 2>/dev/null
+if [ $? -ne 0 ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Failed to create application archive"
+	clear
+	exit 2
+fi
+
+printf "[${G}Done$E]\n"
+
+# Install application
+# ------------------------------------------------------
+printf "Installing application ... \t\t"
+mv ${APP_NAME}.war $JONAS_BASE/webapps/autoload/${APP_NAME}.war 2>/dev/null
+chown ${APP_USER}:${APP_GROUP} $JONAS_BASE/webapps/autoload/${APP_NAME}.war 2>/dev/null
+if [ $? -ne 0 ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Failed to install application archive"
+	clear
+	exit 2
+fi
+
+printf "[${G}Done$E]\n"
+
+# Copy signature
+# ------------------------------------------------------
+printf "Copying signature ... \t\t\t"
+if [ ! -d /exec/applis/${APP_NAME}/signatures ] ; then
+	mkdir /exec/applis/${APP_NAME}/signatures 2>/dev/null
+	chown ${APP_USER}:${APP_GROUP} /exec/applis/${APP_NAME}/signatures 2>/dev/null
+	if [ $? -ne 0 ] ; then
+		printf "[${R}Failed$E]\n"
+		echo "Error : Failed to create signature folder : /exec/applis/${APP_NAME}/signatures"
+		clear
+		exit 2
+	fi
+	chown ${APP_USER}:${APP_GROUP} /exec/applis/${APP_NAME}/signatures 2>/dev/null
+fi
+touch /exec/applis/${APP_NAME}/signatures/${SIG} 2>/dev/null
+if [ $? -ne 0 ] ; then
+	printf "[${R}Failed$E]\n"
+	echo "Error : Failed to copy signature file"
+	clear
+	exit 2
+fi
+
+chown ${APP_USER}:${APP_GROUP} /exec/applis/${APP_NAME}/signatures/${SIG} 2>/dev/null
+
+printf "[${G}Done$E]\n"
+
+# Success, print message
+# ------------------------------------------------------
+printf "\nApplication $G$APP_NAME$E has been installed, on $JONAS_BASE !\n"
+printf "\nConfiguration can be checked or modified if needed :\n"
+printf  "\t Service : $G$JONAS_BASE/conf/mmp.properties$E\n"
+printf  "\t Logger : $G$JONAS_BASE/conf/log4j-mmp.properties$E\n"
+printf "\nLogs will be written in $G$LOGS_PATH$E\n"
+printf "Exploitation scripts found in $G$SCRIPTS_PATH$E\n"
+printf "Shared ressources in $G$REPOSITORY_PATH$E\n"
+clear
+

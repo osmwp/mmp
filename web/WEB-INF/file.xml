@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP FILE Component configuration file
+		
+		This component aims to offer FILE feature support for
+		dynamic modules and services.
+		
+		It allows to use standard File API with centralized implementation
+	 -->
+	 
+	<!-- 
+		MMP FILE Factory to access MMP IO beans
+	 -->
+	<bean id="mmpfileFactory" class="com.orange.mmp.file.FileManagerFactory">
+		<property name="fileManagerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpDefaultFileManager"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 
+		FILE main entry point - FileManager Implementation
+		
+		Current implementation is based on standard java.io 			
+	 -->
+	<bean id="mmpDefaultFileManager" class="com.orange.mmp.file.helpers.DefaultFileManager" depends-on="mmpModuleFactory">
+		<property name="sharedRepositoryRoot" value="${file.repository.root}"/>
+		<property name="chmodCommand" value="/bin/chmod"/>
+	</bean>
+</beans>

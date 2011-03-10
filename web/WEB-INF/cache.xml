@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP CACHE Component configuration file
+		
+		This component aims to handle caching features of MMP
+		
+		Features :
+			- Module cache configuration file - /META-INF/cache.xml (see cache-config.xsd)
+			- Module cache API using named cache with basic cache policies - CacheManager
+	 -->
+	
+	<!-- 
+		MMP CACHE Factory to access MMP CACHE beans
+	 -->
+	<bean id="mmpCacheFactory" class="com.orange.mmp.cache.CacheManagerFactory">
+		<property name="cacheManagerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpCacheEhcache"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 
+		EHCACHE main entry point - CacheManager Implementation
+		
+		Current implementation is based on EHCache V1.6b1  
+			
+	 -->
+	<bean id="mmpCacheEhcache" class="com.orange.mmp.cache.ehcache.EHCacheManager" depends-on="mmpModuleFactory">
+		<!-- EHCache configuration file path in classpath -->
+		<property name="configurationFile" value="${cache.configuration}"/>
+	</bean>
+	
+
+</beans>

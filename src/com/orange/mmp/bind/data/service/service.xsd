@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:element name="service">
+		<xsd:complexType>
+    		<xsd:choice>
+    			<xsd:element name="id" type="xsd:string"/>
+    			<xsd:element name="hostname" type="xsd:string"/>
+    			<xsd:element name="usedefault" type="xsd:boolean"/>
+    			<xsd:element name="signed" type="xsd:boolean"/>
+    			<xsd:element name="wtheadersbymemo" type="xsd:boolean" minOccurs="1" default="false" />
+                <xsd:element name="compactjadentries" type="xsd:boolean" minOccurs="1" default="true" />
+    			<xsd:element name="jadentries">
+	    			<xsd:complexType>
+	    				<xsd:sequence>
+	    					<xsd:element name="jadentry" maxOccurs="unbounded">
+		    					<xsd:complexType>
+		    						<xsd:sequence>
+		    							<xsd:element name="key" type="xsd:string"/>
+		    							<xsd:element name="value" type="xsd:string"/>
+		    						</xsd:sequence>
+		    					</xsd:complexType>
+	    					</xsd:element>
+	    				</xsd:sequence>
+	    			</xsd:complexType>
+    			</xsd:element>
+				<xsd:element name="homepage" type="xsd:boolean" default="true" />
+    		</xsd:choice>
+    		<xsd:attribute name="default" type="xsd:boolean" default="false"/>
+    	</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
+

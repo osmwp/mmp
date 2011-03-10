@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- MMP API Component configuration file
+		
+		This component aims to handle dynamic services exposure
+		
+		Features :
+			- handle dynamic services
+			- Web Services based on JSON/REST ...
+	 -->
+
+	<!-- 
+		MMP API Factory to access MMP API beans
+	 -->
+	<bean id="mmpApiFactory" class="com.orange.mmp.api.ApiContainerFactory">
+		<property name="apiContainerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpApiSimple"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- 
+		MMP API DEFAULT entry point - ApiContainer Implementation
+		
+		Current implementation is based on proprietary API container. 
+		
+		API are available through :
+			- JSON-RPC (JabsOrb 2.0) with COMET support (not implemented yet)
+			- REST (not implemented yet)
+			- ...
+			
+	 -->
+	<bean id="mmpApiSimple" class="com.orange.mmp.api.helpers.DefaultApiContainer"/>
+	
+	<!-- JSON-RPC Bridge singleton access -->
+	<bean id="jsonrpcBridge" class="com.orange.mmp.api.ws.jsonrpc.SimpleJSONRPCBridge"/>
+
+</beans>

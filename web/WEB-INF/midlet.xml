@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- Midlet Manager -->
+	<bean id="midletManager" class="com.orange.mmp.midlet.MidletManager">
+		<property name="midletCacheName" value="${midletmanager.cache.name}"/>
+		<property name="keystoreFile" value="${midletmanager.sign.keystore.file}"/>
+		<property name="keystoreAlias" value="${midletmanager.sign.keystore.alias}"/>
+		<property name="keystoreKey" value="${midletmanager.sign.keystore.key}"/>
+		<property name="CSSSheetsBundleName" value="http://csssheet.m.owp.com"/>
+	</bean>
+
+</beans>

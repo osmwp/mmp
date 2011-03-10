@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- 
+		MMP main configuration file
+		
+		Add main beans here and import components.
+	 -->
+	 
+	<!-- Externalize configuration in a single properties file -->
+	<bean name="mmpConfiguration" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>file:%JONAS_BASE%/conf/mmp.properties</value>
+		</property>
+	</bean>
+	
+	<!-- 
+		Core MMP components installed  
+	-->
+	<!-- Logging beans -->
+	<import resource="log.xml"/>
+	<!-- Cache beans -->
+	<import resource="cache.xml"/>
+	<!-- Media adaptation beans -->
+	<import resource="cadap.xml"/>
+	<!-- Public API Beans -->
+	<import resource="api.xml"/>
+	<!-- Public WEBPART Beans -->
+	<import resource="webpart.xml"/>
+	<!-- Network I/O beans -->
+	<import resource="net.xml"/>
+	<!-- DAO beans -->
+	<import resource="dao.xml"/>
+	<!-- Dynamic modules loader -->
+	<import resource="module.xml"/>
+	<!-- File modules loader -->
+	<import resource="file.xml"/>
+	<!-- I18N Beans -->
+	<import resource="i18n.xml"/>
+
+	<!-- 
+		Core MMP components available  
+	-->
+	<!-- Message Driven Beans -->
+	<!--<import resource="message.xml"/> -->
+
+	<!-- 
+		Service components installed
+	-->
+	<!-- DeliveryManager beans -->
+	<import resource="delivery.xml"/>
+	<!-- WidgetManager beans -->
+	<import resource="widget.xml"/>
+	<!-- ServiceManager beans -->
+	<import resource="service.xml"/>
+	<!-- MidletManager beans -->
+	<import resource="midlet.xml"/>
+	<!-- SMS beans -->
+	<import resource="sms.xml"/>
+	<!-- Filter beans -->
+	<import resource="filter.xml"/>
+	<!-- MVC beans -->
+	<import resource="mvc.xml"/>
+
+	<!-- 
+		Service components available
+	-->
+
+	
+	<!-- 
+	 	Main application controller
+	-->
+	<bean id="mmpController" class="com.orange.mmp.core.ApplicationController">
+		<property name="instanceId" value="${base.instanceid}"/>
+		<property name="master" value="${base.ismaster}"/>
+	</bean>
+</beans>
+

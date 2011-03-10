@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP CADAP Component configuration file
+		
+		This component provides MediaAdapter for several types of mime types
+		
+	 -->
+	 
+	 <!-- 
+		MMP CADAP Factory to access MMP CADAP beans
+	 -->
+	<bean id="mmpCadapFactory" class="com.orange.mmp.cadap.MediaAdapterFactory">
+		<property name="mediaAdapterSingletons">
+			<map>
+				<entry key="image/bmp" value-ref="jaiCadapImage"/>
+				<entry key="image/gif" value-ref="jaiCadapImage"/>
+				<entry key="image/png" value-ref="jaiCadapImage"/>
+				<entry key="image/jpg" value-ref="jaiCadapImage"/>
+				<entry key="image/jpeg" value-ref="jaiCadapImage"/>
+			</map>
+		</property>
+	</bean>
+	 
+	<!-- 
+		Images adapter entry point - MediaAdapter Implementations
+			Supports : gif, bmp, jpg and png
+			
+		Based on JAI lib	
+	 -->
+	 <bean id="jaiCadapImage" class="com.orange.mmp.cadap.jai.JaiImageAdapter">
+	 	<property name="imageMaxSize" value="3000000"/>
+	 </bean>
+
+</beans>

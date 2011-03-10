@@ -1,0 +1,153 @@
+<project name="mmp" basedir=".">
+
+	<!-- Properties -->
+	<property file="build.properties" />
+	
+	<!-- Tasks -->
+	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+	  <classpath>
+	    <fileset dir="${xjc.home}" includes="*.jar" />
+	  </classpath>
+	</taskdef>
+
+	<!-- CORE MMP API is for PUBLIC use in Widgets and Bundles-->
+	<target name="core-api">
+			<delete file="build/api/mmp-api-core-${mmp.version}.jar" failonerror="no"/>
+			<mkdir dir="build/api"/>
+			<jar destfile="build/api/mmp-api-core-${mmp.version}.jar">
+				<!-- CORE API -->
+				<fileset dir="build/classes" includes="com/orange/mmp/core/ApplicationListener.class"/>
+				<fileset dir="build/classes" includes="com/orange/mmp/core/MMPException.class"/>
+				<fileset dir="build/classes" includes="com/orange/mmp/core/MMPRuntimeException.class"/>
+				<fileset dir="build/classes" includes="com/orange/mmp/core/Constants.class"/>
+				<!-- DATA -->
+				<fileset dir="build/classes" includes="com/orange/mmp/core/data/*.class"/>
+				<!-- MODULE -->
+				<fileset dir="build/classes" includes="com/orange/mmp/module/*.class"/>
+				<!-- CACHE -->
+				<fileset dir="build/classes" includes="com/orange/mmp/cache/*.class"/>
+				<!-- CADAP -->
+				<fileset dir="build/classes" includes="com/orange/mmp/cadap/*.class"/>								
+				<!-- API -->
+				<fileset dir="build/classes" includes="com/orange/mmp/api/*.class"/>
+				<!-- LOG -->
+				<fileset dir="build/classes" includes="com/orange/mmp/log/*.class"/>
+				<!-- MESSAGE -->
+				<fileset dir="build/classes" includes="com/orange/mmp/message/*.class"/>
+				<!-- I18N -->
+				<fileset dir="build/classes" includes="com/orange/mmp/i18n/*.class"/>
+				<!-- BINDINGS -->
+				<fileset dir="build/classes" includes="com/orange/mmp/bind/*.class"/>								
+				<!-- CONTEXT -->
+				<fileset dir="build/classes" includes="com/orange/mmp/context/*.class"/>								
+				<!-- NET -->
+				<fileset dir="build/classes" includes="com/orange/mmp/net/*.class"/>
+				<fileset dir="build/classes" includes="com/orange/mmp/net/http/HttpConnectionParameters.class"/>
+				<fileset dir="build/classes" includes="com/orange/mmp/net/socket/SocketConnectionParameters.class"/>
+				<!-- FILE -->
+				<fileset dir="build/classes" includes="com/orange/mmp/file/*.class"/>
+				<!-- CRYPTO -->
+				<fileset dir="build/classes" includes="com/orange/mmp/crypto/*.class"/>
+				<!-- FILTER -->
+				<fileset dir="build/classes" includes="com/orange/mmp/filter/*.class"/>
+				<!-- WEB PART -->
+				<fileset dir="build/classes" includes="com/orange/mmp/webpart/accesspoint/*.class"/>
+			</jar>
+	</target>
+	
+	<!-- EXTENDED MMP API is for PRIVATE use in Widgets and Bundles-->
+	<target name="extended-api">
+				<delete file="build/api/mmp-api-ext-${mmp.version}.jar" failonerror="no"/>
+				<mkdir dir="build/api"/>
+				<jar destfile="build/api/mmp-api-ext-${mmp.version}.jar">
+					<!-- DAO -->
+					<fileset dir="build/classes" includes="com/orange/mmp/dao/*.class"/>
+					<!-- DELIVERY -->
+					<fileset dir="build/classes" includes="com/orange/mmp/delivery/*.class"/>
+					<!-- MIDLET -->
+					<fileset dir="build/classes" includes="com/orange/mmp/midlet/*.class"/>
+					<!-- WIDGET -->
+					<fileset dir="build/classes" includes="com/orange/mmp/widget/*.class"/>
+					<!-- SERVICE -->
+					<fileset dir="build/classes" includes="com/orange/mmp/service/*.class"/>
+					<!-- SMS -->
+					<fileset dir="build/classes" includes="com/orange/mmp/sms/*.class"/>										
+					<!-- MVC -->
+					<fileset dir="build/classes" includes="com/orange/mmp/mvc/*.class"/>
+				</jar>
+		</target>
+
+	<!-- Rebuild the JAXB binding classes -->
+	<target name="data-binding">
+		<xjc schema="${mmp.project.home}/src/com/orange/mmp/bind/data/service/service.xsd"
+			package="com.orange.mmp.bind.data.service" 
+			 destdir="${mmp.project.home}/src"
+			 extension="true"/>
+		<xjc schema="${mmp.project.home}/src/com/orange/mmp/bind/data/mobile/mobile.xsd"
+					package="com.orange.mmp.bind.data.mobile" 
+					 destdir="${mmp.project.home}/src"
+					 extension="true"/>
+		<xjc schema="${mmp.project.home}/src/com/orange/mmp/bind/data/branch/branch.xsd"
+					package="com.orange.mmp.bind.data.branch" 
+					 destdir="${mmp.project.home}/src"
+					 extension="true"/>
+		<xjc schema="${mmp.project.home}/src/com/orange/mmp/core/config/mmp-config.xsd"
+					package="com.orange.mmp.core.config"  
+					destdir="${mmp.project.home}/src/"
+					 extension="true"/>
+	</target>
+	
+	
+	<!-- Default Delivery archive creation-->
+	<target name="delivery">
+		<delete dir="resources/delivery/tmp" failonerror="no"/>
+		<!-- CONFIGURATION content -->
+		<mkdir dir="resources/delivery/tmp/conf"/>
+		<copy todir="resources/delivery/tmp/conf" verbose="no">
+			<fileset dir="resources/conf" includes="mmp.properties,log4j-mmp.properties,server.xml,ehcache.xml,cacerts"/>
+		</copy>
+		<fixcrlf srcdir="resources/delivery/tmp/conf" includes="*.*" eol="lf" eof="remove" />
+		<!-- VALVES content -->
+		<copy todir="resources/delivery/tmp/conf" verbose="no">
+			<fileset dir="resources/valves" includes="${mmp.valves}"/>
+		</copy>
+		<!-- SCRIPTS content -->
+		<mkdir dir="resources/delivery/tmp/sh"/>
+		<copy todir="resources/delivery/tmp/sh" verbose="no">
+			<fileset dir="resources/sh" includes="*"/>
+		</copy>
+		<!-- /WEB-INF content -->
+		<mkdir dir="resources/delivery/tmp/WEB-INF/classes"/>
+		<copy todir="resources/delivery/tmp/WEB-INF" verbose="no">
+		    <fileset dir="web/WEB-INF" includes="**/*"/>
+		</copy>
+		<!-- STATIC content -->
+		<copy todir="resources/delivery/tmp/" verbose="no">
+			<fileset dir="web" includes="admin/*.jsp"/>
+			<fileset dir="web" includes="*.jsp"/>
+			<fileset dir="web" includes="*js/**/*"/>
+			<fileset dir="web" includes="*css/**/*"/>
+			<fileset dir="web" includes="*img/**/*"/>
+		</copy>
+		<!-- CLASSES content -->
+		<copy todir="resources/delivery/tmp/WEB-INF/classes" verbose="no">
+			<fileset dir="build/classes" includes="**/*"/>
+			<fileset dir="build" includes="META-INF/**/*"/>
+		</copy>
+		<!-- META-INF content -->
+		<mkdir dir="resources/delivery/tmp/META-INF"/>
+		<copy todir="resources/delivery/tmp/META-INF" verbose="no">
+			<fileset dir="web/META-INF" includes="${mmp.context}"/>
+		</copy>
+		
+		<!-- Make archive -->
+		<tar destfile="resources/delivery/A-MMP-${mmp.version}.tar"
+				basedir="resources/delivery/tmp" includes="**/*" excludes="install-mmp"/>
+		<tar destfile="resources/delivery/A-MMP-${mmp.version}.tar.tmp"
+				basedir="resources/delivery" includes="A-MMP-${mmp.version}.tar,install-mmp"/>
+		<gzip src="resources/delivery/A-MMP-${mmp.version}.tar.tmp" destfile="resources/delivery/A-MMP-${mmp.version}.tgz"/>
+		<delete file="resources/delivery/A-MMP-${mmp.version}.tar.tmp" failonerror="no"/>
+		<delete file="resources/delivery/A-MMP-${mmp.version}.tar" failonerror="no"/>
+		<delete dir="resources/delivery/tmp" failonerror="no"/>
+	</target>
+</project>

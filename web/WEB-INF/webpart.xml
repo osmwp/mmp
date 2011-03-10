@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<!-- MMP Web Part Component configuration file
+		
+		This component aims to handle dynamic services exposure
+		
+		Features :
+			- handle web part of bundle access
+	 -->
+
+	<!-- 
+		MMP Web Part Factory to access MMP Web Part beans
+	 -->
+	<bean id="mmpWebPartFactory" class="com.orange.mmp.webpart.WebPartContainerFactory">
+		<property name="apiContainerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpWebPartSimple"/>
+			</map>
+		</property>
+		
+		<!--
+		Extensions and associated MIME type.
+		Use to complete content type.
+		-->
+		<property name="contentTypeByExtension">
+			<map>
+				<!-- Text -->
+				<entry key="htm" value="text/html"/>
+				<entry key="html" value="text/html"/>
+				<entry key="txt" value="text/plain"/>
+				<entry key="ftl" value="text/plain"/> <!-- FreeMarker template -->
+				<entry key="css" value="text/css"/>
+				<entry key="csv" value="text/csv"/>
+				<entry key="rtf" value="text/rtf"/>
+				<entry key="xml" value="text/xml"/>
+
+				<!-- Applications -->
+				<entry key="bin" value="application/octet-stream"/>
+				<entry key="pdf" value="application/pdf"/>
+				<entry key="atom" value="application/atom+xml"/>
+				<entry key="js" value="application/javascript"/>
+
+				<!-- Audio -->
+				<entry key="au" value="audio/basic"/>
+				<entry key="snd" value="audio/basic"/>
+				<entry key="wav" value="audio/x-wav"/>
+				<entry key="mpg" value="audio/mpeg"/>
+				<entry key="mp3" value="audio/mpeg"/>
+				<entry key="mp4" value="audio/mp4"/>
+				<entry key="aif" value="audio/x-aiff"/>
+				<entry key="aiff" value="audio/x-aiff"/>
+				<entry key="aifc" value="audio/x-aiff"/>
+				
+				<!-- Images -->
+				<entry key="gif" value="image/gif"/>
+				<entry key="jpg" value="image/jpeg"/>
+				<entry key="jpeg" value="image/jpeg"/>
+				<entry key="jpe" value="image/jpeg"/>
+				<entry key="png" value="image/png"/>
+				<entry key="tiff" value="image/tiff"/>
+				<entry key="tif" value="image/tiff"/>
+
+				<!-- Videos -->
+				<entry key="mpeg" value="video/mpeg"/>
+				<entry key="mpg" value="video/mpeg"/>
+				<entry key="mpe" value="video/mpeg"/>
+				<entry key="qt" value="video/quicktime"/>
+				<entry key="mov" value="video/quicktime"/>
+				<entry key="h264" value="video/h264"/>
+				<entry key="dv" value="video/dv"/>
+				<entry key="avi" value="video/msvideo"/>
+			</map>
+		</property>
+		
+		<!--
+		All extensions with support of template.
+		We apply template engine only for this extensions.
+		-->
+		<property name="extensionsWithTemplateSupport">
+			<list>
+				<value>htm</value>
+				<value>html</value>
+				<value>txt</value>
+				<value>ftl</value>
+				<value>css</value>
+				<value>csv</value>
+				<value>xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 
+		MMP WEB PART DEFAULT entry point - WebPartContainer Implementation
+		
+		Current implementation is based on proprietary web part container. 
+					
+	 -->
+	<bean id="mmpWebPartSimple" class="com.orange.mmp.webpart.helpers.DefaultWebPartContainer"/>
+
+</beans>

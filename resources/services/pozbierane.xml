@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Pozbierane service descriptor -->
+<service xmlns="http://www.orange.com/mmp/bind/data/service">
+	<!-- Service ID -->
+	<id>pozbierane</id>
+	<!-- Service hostname -->
+	<hostname>m.djinngo.pl</hostname>
+	<!-- Indicates if service supports generic default version for unsupported mobiles -->
+	<usedefault>true</usedefault>
+	<!-- Indicates if service must be signed if possible -->
+	<signed>false</signed>
+</service>

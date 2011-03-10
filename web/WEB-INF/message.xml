@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">	
+
+	<!-- MMP MESSAGE Component configuration file
+		
+		This component is a message oriented broker. The goal is too allow
+		horizontal scalability by exposing services across a service BUS which
+		can be based on SOA/MOM features:
+			- JMS (default)
+			- WS/SOAP (SOA) (not implemented yet)
+			- RMI (not implemented yet)
+			- ...
+		
+		Features :
+			- expose and use MMP services on an service bus
+			- offers horizontal scalabality for SOA approach
+			- introduce an abstraction layer to hide SOA implementation 
+	 -->
+
+	<!-- 
+		MMP MESSAGE Factory to access MMP MESSAGE beans
+	 -->
+	<bean id="mmpMessageFactory" class="com.orange.mmp.message.MessageBrokerFactory">
+		<property name="messageBrokerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpMessageJms"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- 
+		JMS entry point - MessageBroker Implementation
+		
+		Current implementation is based on JMS using a Middle
+		Oriented Middleware (ActiveMQ 5.0) and Spring JMS features.
+		
+		JMS configuration is based on fast asynchronous delivery of messages
+		without acknowledgment and transactions but can be configured to use
+		these features (use Jencks as JCA container for consumers). 			
+	 -->
+	<bean id="mmpMessageJms" class="com.orange.mmp.message.jms.JMSMessageBroker">
+		<!-- Default Publisher/Subscriber endpoint (for message to all) -->
+		<property name="defaultTopic" ref="defaultTopic"/>
+		<!-- Default PTP endpoint for incoming messages -->
+		<property name="defaultQueue" ref="defaultQueue"/>
+		<!-- JMSTemplate initialization for outgoing messages -->
+		<property name="jmsTemplate">
+			<bean class="org.springframework.jms.core.JmsTemplate">
+				<!-- Connection factory for outgoing messages (pooling support) -->
+				<property name="connectionFactory">
+					<bean class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+						<property name="connectionFactory" ref="activeMQConnectionFactory"/>
+						<property name="maxConnections" value="10"/>
+					</bean>
+				</property>
+				<!-- Default endpoint for outgoing messages -->
+				<property name="defaultDestination" ref="defaultTopic"/>
+				<!-- Acknowledge is done by client -->
+				<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+				<!-- No persistence of message -->
+				<property name="deliveryPersistent" value="false"/>
+				<!-- Disable explicit QoS -->
+				<property name="explicitQosEnabled" value="false"/>
+				<!-- Disable MessageID, handled in generic MMP Message -->
+				<property name="messageIdEnabled" value="false"/>
+				<!-- Disable Timestamp -->
+				<property name="messageTimestampEnabled" value="false"/>
+				<!-- No transacted session -->
+				<property name="sessionTransacted" value="false"/>
+			</bean>
+		</property>
+		<!-- Set MMP instance ID to avoid reentrant messages -->
+		<property name="instanceId" value="${base.instanceid}"/>
+		<!-- Task Executor to dispatch messages to modules and components -->
+		<property name="messageListenerTaskExecutor">
+			<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+  				<property name="corePoolSize" value="10"/>
+  				<property name="maxPoolSize" value="10"/>
+			</bean>
+		</property>
+		<!-- Timeout in seconds for synchronous messages -->
+		<property name="synchronousMessageTimeout" value="30"/>
+		<!-- Maximum number of simultaneous  synchronous messages -->
+		<property name="maxSynchronousListeners" value="10"/>		
+	</bean>
+	
+	<!-- 
+		Handler for Service Registration Messages
+	 -->
+	<bean class="com.orange.mmp.message.jms.JMSServiceRegistrationHandler"/>
+
+	<!-- 
+		Handler for Service Invocation Messages
+	 -->
+	<bean class="com.orange.mmp.message.jms.JMSServiceInvocationHandler"/>
+		
+	 <!--
+		Default Topic Listener on DefaultTopic (copy this part to add Topic Listeners)
+	 -->
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">    
+       	<!-- Set maximum consumers to 1 on message to all listener  -->
+        <property name="concurrentConsumers" value="1"/>
+        <property name="maxConcurrentConsumers" value="1"/>
+        <!-- ConnectionFactory for message to all listener (caching support) -->
+        <property name="connectionFactory">
+        	<bean class="org.springframework.jms.connection.CachingConnectionFactory">
+				<property name="targetConnectionFactory">
+					<bean class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+						<property name="connectionFactory" ref="activeMQConnectionFactory"/>
+						<property name="maxConnections" value="10"/>
+					</bean>
+				</property>
+        	</bean>
+        </property>   
+        <!-- Endpoint for incoming messages to all --> 
+        <property name="destination" ref="defaultTopic"/>
+        <!-- MessageSelector to avoid reentrant messages -->
+        <property name="messageSelector" value="SID &lt;&gt; '${base.instanceid}'"/>
+        <!-- Set the message listener -->    
+        <property name="messageListener">
+        	<bean class="com.orange.mmp.message.jms.JMSDefaultTopicListener">
+        		<property name="instanceId" value="${base.instanceid}"/>
+        		<property name="messageBroker" ref="mmpMessageJms"/>
+        	</bean>
+        </property>
+    </bean>
+    
+    <!--
+		Default Queue Listener on DefaultQueue (copy this part to add Queue Listeners)
+	 -->
+	<bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">    
+        <!-- Configure main Queue cache here -->
+        <property name="concurrentConsumers" value="10"/>
+        <!-- ConnectionFactory for end to end messages listener (caching support) -->
+        <property name="connectionFactory">
+        	<bean class="org.springframework.jms.connection.CachingConnectionFactory">
+				<property name="targetConnectionFactory">
+					<bean class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+						<property name="connectionFactory" ref="activeMQConnectionFactory"/>
+						<property name="maxConnections" value="10"/>
+					</bean>
+				</property>
+        	</bean>
+        </property>    
+        <!-- Queue linked to the end to end messages listener -->
+        <property name="destination" ref="defaultQueue"/>            
+        <!-- Set the message listener -->    
+        <property name="messageListener">
+        	<bean class="com.orange.mmp.message.jms.JMSDefaultQueueListener">
+        		<property name="instanceId" value="${base.instanceid}"/>
+        		<property name="messageBroker" ref="mmpMessageJms"/>
+        	</bean>
+        </property>
+    </bean>
+   
+   <!-- 
+		JMS Topic used to register services
+	 -->
+	<bean id="defaultTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<property name="physicalName" value="${message.broker.publishersubscriber.endpoint}"/>
+	</bean>	
+
+   <!-- 
+		JMS Queue used to register services
+	 -->
+	<bean id="defaultQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<property name="physicalName" value="${message.broker.endtoend.endpoint}"/>
+	</bean>	
+   
+	<!-- 
+		JMS Base ConnectionFactory (to not use directly but with Caching processes)
+	 -->
+     <bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="${message.broker.url}"/>
+	</bean>
+</beans>

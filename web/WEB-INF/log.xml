@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP LOG Component configuration file
+		
+		This component aims to offer logging feature support for
+		dynamic modules and services.
+		
+		It allows to use standard logging API with centralized implementation
+		
+		Features :
+			- ...
+	 -->
+	 
+	<!-- 
+		MMP LOG Factory to access MMP LOG beans
+	 -->
+	<bean id="mmpLogFactory" class="com.orange.mmp.log.LogManagerFactory">
+		<property name="logManagerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpLogLog4j"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 
+		LOG main entry point - LogManager Implementation
+		
+		Current implementation is based on LOG4J 			
+	 -->
+	<bean id="mmpLogLog4j" class="com.orange.mmp.log.log4j.Log4jLogManager" depends-on="mmpModuleFactory">
+		<!-- LogManager configuration file -->
+		<property name="mainConfigurationFile" value="${log.configuration}"/>
+		<!-- LogManager root folder -->
+		<property name="logsRootFolder" value="${log.folder}"/>	
+		<!-- Server instance to allow shared folder use -->
+		<property name="serverInstanceId" value="${base.instanceid}"/>	
+	</bean>
+	
+	
+	<!-- Monitored request writer - Write errors -->
+	<bean id="mmpLogMonitoredRequestError" class="com.orange.mmp.util.requestmonitor.impl.DefaultMonitoredRequestWriter" />
+	<!-- Monitored request writer - Write statistics -->
+	<bean id="mmpLogMonitoredRequestStats" class="com.orange.mmp.util.requestmonitor.impl.StatsMonitoredRequestWriter" />
+	<!-- 
+		Logger for monitored request
+	 -->
+	<bean id="mmpLogMonitoredRequest" class="com.orange.mmp.log.requestmonitor.LogMonitoredRequest">
+		<!-- LogManager configuration file -->
+		<property name="errorWriter" ref="mmpLogMonitoredRequestError"/>
+		<!-- LogManager root folder -->
+		<property name="statsWriter" ref="mmpLogMonitoredRequestStats"/>
+	</bean>
+	
+	
+</beans>

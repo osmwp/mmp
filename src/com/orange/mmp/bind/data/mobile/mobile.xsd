@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="mobile-catalog">
+    	<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="mobile" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+				   			<xsd:element name="jadAttributes" minOccurs="0">
+				   				<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="jadAction" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+										        <xsd:attribute name="action" use="required">
+										            <xsd:simpleType>
+										                <xsd:restriction base="xsd:string">
+										                    <xsd:enumeration value="add"/>
+										                    <xsd:enumeration value="modify"/>
+										                    <xsd:enumeration value="delete"/>
+										                </xsd:restriction>
+										            </xsd:simpleType>
+										        </xsd:attribute>
+										        <xsd:attribute name="attribute" type="xsd:string" use="required"/>
+										        <xsd:attribute name="value" type="xsd:string" use="optional"/>
+										        <xsd:attribute name="strict" type="xsd:boolean" use="optional" default="false"/>
+										        <xsd:attribute name="inJad" use="optional">
+										            <xsd:simpleType>
+										                <xsd:restriction base="xsd:string">
+										                    <xsd:enumeration value="signed"/>
+															<xsd:enumeration value="unsigned"/>
+										            		<xsd:enumeration value="always"/>
+										            		<xsd:enumeration value="never"/>
+										                </xsd:restriction>
+										            </xsd:simpleType>
+										        </xsd:attribute>
+										        <xsd:attribute name="inMF" use="optional">
+										            <xsd:simpleType>
+										                <xsd:restriction base="xsd:string">
+										                    <xsd:enumeration value="signed"/>
+															<xsd:enumeration value="unsigned"/>
+										            		<xsd:enumeration value="always"/>
+										            		<xsd:enumeration value="never"/>
+										                </xsd:restriction>
+										            </xsd:simpleType>
+										        </xsd:attribute>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+				   			</xsd:element>
+				   			<xsd:element name="dropped" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+				   			<xsd:element name="dropDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						</xsd:sequence>
+				        <xsd:attribute name="userAgentKey" type="xsd:string" use="required"/>
+				        <xsd:attribute name="finalName" type="xsd:string" use="required"/>
+				        <xsd:attribute name="codeName" type="xsd:string" use="optional"/>
+				        <xsd:attribute name="branchId" type="xsd:string" use="optional"/>
+				        <xsd:attribute name="midletType" type="xsd:string" use="required"/>
+				        <xsd:attribute name="shortUA" type="xsd:string" use="required"/>
+				        <xsd:attribute name="OTAEnabled" type="xsd:boolean" use="optional"/>
+					</xsd:complexType>				
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+    </xsd:element>
+</xsd:schema>

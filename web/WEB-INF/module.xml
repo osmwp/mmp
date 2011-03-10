@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- MMP MODULE Component configuration file
+		
+		This component aims to handle dynamic modules framework
+		for MMP. Each module observer is in charge of implementing
+		its business logic using CUMA core features listed below.
+		
+		Features :
+			- Dynamic modules container - ModuleContainer
+			- Modules events handling - ModuleObserver
+			- Modules resources access
+			- Modules dynamic class loading
+	 -->
+
+	<!-- 
+		MMP MODULE Factory to access MMP MODULE beans
+	 -->
+	<bean id="mmpModuleFactory" class="com.orange.mmp.module.ModuleContainerFactory">
+		<property name="moduleContainerSingletons">
+			<map>
+				<entry key="default" value-ref="mmpModuleFelixOSGI"/>
+			</map>		
+		</property>
+	</bean>
+
+	<!-- 
+		MODULE main entry point - ModuleContainer Implementation
+		
+		Current implementation is based on OSGi	using Apache Felix framework - Felix v1.4.
+	 -->
+	<bean id="mmpModuleFelixOSGI" class="com.orange.mmp.module.osgi.MMPOSGiContainer" depends-on="mmpDaoFactory">
+		<property name="refreshDelay" value="${module.loader.delay}"/>
+		<!-- Apache Felix Properties -->
+		<property name="felixProperties">
+			<map>
+				<entry key="org.osgi.framework.storage" value="${module.repository.dir}"/>
+				<entry key="org.osgi.framework.storage.clean" value="onFirstInit"/>
+				<entry key="felix.cache.bufsize" value="4096"/>
+				<entry key="felix.log.level" value="1"/>
+				<entry key="org.osgi.framework.startlevel" value="1"/>
+				<entry key="felix.startlevel.bundle" value="1"/>
+				<entry key="felix.service.urlhandlers" value="false"/>
+			</map>
+		</property>		
+		<!-- Default exported packages (system packages) -->
+		<property name="systemPackages">
+			<list>
+				<!-- OSGi Core & Services Packages -->
+				<value>org.osgi.framework; version="1.3.0"</value>
+				<!-- MMP Core API for Public Use -->
+				<value>com.orange.mmp.core</value>
+				<value>com.orange.mmp.core.data</value>
+				<value>com.orange.mmp.api</value>
+				<value>com.orange.mmp.bind</value>
+				<value>com.orange.mmp.cache</value>
+				<value>com.orange.mmp.log</value>
+				<value>com.orange.mmp.module</value>
+				<value>com.orange.mmp.message</value>
+				<value>com.orange.mmp.i18n</value>
+				<value>com.orange.mmp.context</value>
+				<value>com.orange.mmp.net</value>
+				<value>com.orange.mmp.net.http</value>
+				<value>com.orange.mmp.net.socket</value>
+				<value>com.orange.mmp.cadap</value>
+				<value>com.orange.mmp.bind</value>
+				<value>com.orange.mmp.crypto</value>
+				<value>com.orange.mmp.filter</value>
+				<value>com.orange.mmp.file</value>
+				<value>com.orange.mmp.webpart.accesspoint</value>
+								
+				<!-- MMP Extended API for Inner Use Only -->
+				<value>com.orange.mmp.dao</value>
+				<value>com.orange.mmp.delivery</value>
+				<value>com.orange.mmp.midlet</value>
+				<value>com.orange.mmp.widget</value>
+				<value>com.orange.mmp.service</value>
+				<value>com.orange.mmp.sms</value>
+				
+				<!-- Thrid party API -->				
+				<!-- JAX-WS as not implemented in JRE1.5 -->
+				<value>javax.xml.ws</value>
+				<value>javax.jws</value>
+				<!-- JAXB as not implemented in JRE1.5 -->
+				<value>javax.xml.bind</value>
+				<value>javax.xml.bind.annotation</value>
+				<value>javax.xml.bind.annotation.adapters</value>
+				<value>javax.xml.bind.attachment</value>
+				<value>javax.xml.bind.helpers</value>
+				<value>javax.xml.bind.util</value>
+				<!--  JAXB Implementation -->
+				<value>com.sun.xml.bind</value>
+				<value>com.sun.xml.bind.v2</value>
+				<!-- Json tools of PFS -->
+				<value>org.json</value>
+				
+				<!-- Fix of Felix Bug !!! -->
+				<value>javax.xml.namespace</value>
+				<value>javax.xml.datatype</value>
+				<value>javax.swing.text</value>
+				<value>javax.swing.text.html</value>
+				<value>javax.swing.text.html.parser</value>
+				<value>javax.servlet.http</value>
+				
+				<!-- LocationBased API  -->
+				<value>javax.xml.stream</value>
+				<value>javax.xml.parsers</value>
+				<value>javax.xml.transform</value>
+				<value>javax.xml.transform.stream</value>
+				<value>javax.xml.transform.sax</value>
+				<value>javax.xml.transform.dom</value>
+				<value>javax.xml.transform.stax</value>
+				<value>org.w3c.dom</value>
+				
+				<value>org.htmlparser.util</value>
+				
+			</list>
+		</property>
+	</bean>
+	
+	
+</beans>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- myTen service descriptor -->
+<service xmlns="http://www.orange.com/mmp/bind/data/service">
+	<!-- Service ID -->
+	<id>myten</id>
+	<!-- Service hostname -->
+	<hostname>m.myten.fr</hostname>
+	<!-- Indicates if service supports generic default version for unsupported mobiles -->
+	<usedefault>false</usedefault>
+	<!-- Indicates if service must be signed if possible -->
+	<signed>true</signed>
+</service>
